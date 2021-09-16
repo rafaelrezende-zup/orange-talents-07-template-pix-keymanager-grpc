@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "br.com.zup";
+option java_outer_classname = "DesafioPix";
+option objc_class_prefix = "HLW";
+
+package br.com.zup;
+
+service DesafioPixService {
+  rpc novaChavePix (NovaChavePixRequest) returns (NovaChavePixResponse) {}
+}
+
+enum TIPO_CHAVE {
+  ALEATORIA = 0;
+  CPF = 1;
+  TELEFONE = 2;
+  EMAIL = 3;
+}
+
+message NovaChavePixRequest {
+  string idCLiente = 1;
+  TIPO_CHAVE tipoChave = 2;
+  string chave = 3;
+}
+
+message NovaChavePixResponse {
+  string pixId = 1;
+}

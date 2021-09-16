@@ -1,0 +1,21 @@
+Thumbs.db
+desafio-pix/.DS_Store
+desafio-pix/.gradle
+desafio-pix/build/
+desafio-pix/target/
+desafio-pix/out/
+desafio-pix/.project
+desafio-pix/.settings
+desafio-pix/.classpath
+desafio-pix/.factorypath
+
+HELP.md
+desafio-pix/!.mvn/wrapper/maven-wrapper.jar
+desafio-pix/!**/src/main/**/target/
+desafio-pix/!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+desafio-pix/.idea
+desafio-pix/*.iws
+desafio-pix/*.iml
+desafio-pix/*.ipr

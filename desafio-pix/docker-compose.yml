@@ -1,0 +1,34 @@
+version: '3'
+services:
+    bcb:
+        image: "public.ecr.aws/d8b2x5c9/orange-stack-sat-bcb-pix"
+        ports: 
+            - 8082:8082
+
+    erp-itau:
+        image: "public.ecr.aws/d8b2x5c9/orange-stack-sat-itau-erp"
+        ports: 
+            - 9091:9091
+
+    postgres:
+        image: 'postgres:9.6-alpine'
+        volumes:
+            - postgres:/var/lib/postgresql/data
+        ports:
+            - 5433:5432
+        environment:
+            POSTGRES_USER: admin
+            POSTGRES_PASSWORD: admin
+            POSTGRES_DB: pix
+            POSTGRES_HOST: postgres
+
+    pgAdmin:
+        image: dpage/pgadmin4
+        ports:
+            - 4242:80
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: admin
+
+volumes:
+    postgres:
