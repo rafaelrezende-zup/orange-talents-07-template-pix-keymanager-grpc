@@ -1,6 +1,5 @@
 package br.com.zup.chavePix
 
-import io.micronaut.validation.validator.constraints.EmailValidator
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator
 
 enum class TipoChave {
@@ -27,10 +26,11 @@ enum class TipoChave {
     EMAIL {
         override fun valida(chave: String?): Boolean {
             if (chave.isNullOrBlank()) return false
-            return EmailValidator().run {
-                initialize(null)
-                isValid(chave, null)
-            }
+//            return EmailValidator().run {
+//                initialize(null)
+//                isValid(chave, null)
+//            }
+            return chave.matches("^[A-Za-z0-9+_.-]+@(.+)\$".toRegex())
         }
     },
     ALEATORIA {

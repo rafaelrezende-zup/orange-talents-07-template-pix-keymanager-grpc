@@ -42,7 +42,11 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("org.postgresql:postgresql")
     // testes
+    kaptTest "io.micronaut:micronaut-inject-java"
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("org.mockito:mockito-junit-jupiter:3.8.0")
     testImplementation("com.h2database:h2")
+    testImplementation("org.testcontainers:junit-jupiter")
 }
 
 

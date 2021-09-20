@@ -17,7 +17,7 @@ import javax.validation.constraints.Size
 data class NovaChavePix(
     @ValidUUID @field:NotBlank val idCliente: String?,
     @field:NotNull val tipoChave: TipoChave?,
-    @field:Size(max = 77) val chave: String?,
+    @field:Size(max = 77) @field:NotBlank val chave: String?,
     @field:NotNull val tipoConta: TipoConta?
 ) {
     fun paraChavePix(contaBancaria: ContaBancaria): ChavePix {
