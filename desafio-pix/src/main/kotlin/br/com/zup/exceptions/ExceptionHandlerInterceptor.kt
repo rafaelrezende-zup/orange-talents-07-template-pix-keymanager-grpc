@@ -2,13 +2,16 @@ package br.com.zup.exceptions
 
 import io.grpc.BindableService
 import io.grpc.stub.StreamObserver
+import io.micronaut.aop.InterceptorBean
 import io.micronaut.aop.MethodInterceptor
 import io.micronaut.aop.MethodInvocationContext
+import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.slf4j.LoggerFactory
 
 @Singleton
-class ExceptionHandlerInterceptor(private val resolver: ExceptionHandlerResolver) : MethodInterceptor<BindableService, Any?> {
+@InterceptorBean(ErrorHandler::class)
+class ExceptionHandlerInterceptor(@Inject private val resolver: ExceptionHandlerResolver) : MethodInterceptor<BindableService, Any?> {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 

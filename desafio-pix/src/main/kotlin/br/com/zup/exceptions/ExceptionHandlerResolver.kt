@@ -1,15 +1,13 @@
 package br.com.zup.exceptions
 
 import br.com.zup.exceptions.handler.DefaultExceptionHandler
+import jakarta.inject.Singleton
 
-class ExceptionHandlerResolver(private val handlers : List<ExceptionHandler<*>>) {
+@Singleton
+class ExceptionHandlerResolver(private val handlers : List<ExceptionHandler<Exception>>) {
 
     private var defaultHandler: ExceptionHandler<Exception> = DefaultExceptionHandler()
 
-    /**
-     * We can replace the default exception handler through this constructor
-     * https://docs.micronaut.io/latest/guide/index.html#replaces
-     */
     constructor(handlers: List<ExceptionHandler<Exception>>, defaultHandler: ExceptionHandler<Exception>) : this(handlers) {
         this.defaultHandler = defaultHandler
     }

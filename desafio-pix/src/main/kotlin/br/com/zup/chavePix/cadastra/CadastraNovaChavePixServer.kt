@@ -14,11 +14,15 @@ class CadastraNovaChavePixServer(val service: CadastraNovaChavePixService) : Key
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun cadastra(request: NovaChavePixRequest, responseObserver: StreamObserver<NovaChavePixResponse>) {
+    override fun cadastra(
+        request: NovaChavePixRequest,
+        responseObserver: StreamObserver<NovaChavePixResponse>
+    ) {
         logger.info("Gerando nova chave pix para $request")
 
         val novaChave = request.paraNovaChavePix()
         val chave = service.cadastra(novaChave)
+
         responseObserver.onNext(NovaChavePixResponse
             .newBuilder()
             .setIdPix(chave.id)

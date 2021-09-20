@@ -1,6 +1,5 @@
 package br.com.zup.chavePix
 
-import br.com.zup.validators.ValidPixKey
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 import java.util.*
@@ -11,7 +10,7 @@ import javax.validation.constraints.Size
 
 @Entity
 class ChavePix(
-    @ValidPixKey @field:Size(max = 77) @field:NotBlank @field:Column(unique = true, length = 77) val chave: String,
+    @field:Size(max = 77) @field:NotBlank @field:Column(unique = true, length = 77) val chave: String,
     @field:NotNull @field:Enumerated(EnumType.STRING) val tipoChave: TipoChave,
     @field:NotBlank @field:Column(nullable = false) val idCliente: String,
     @field:NotNull @field:Enumerated(EnumType.STRING) val tipoConta: TipoConta,
