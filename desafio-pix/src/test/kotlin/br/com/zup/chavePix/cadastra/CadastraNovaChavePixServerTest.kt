@@ -134,7 +134,7 @@ internal class CadastraNovaChavePixServerTest(
 
         // validação
         with(response) {
-            assertEquals(Status.FAILED_PRECONDITION.code, status.code)
+            assertEquals(Status.NOT_FOUND.code, status.code)
             assertEquals("Cliente Itaú não encontrado.", status.description)
         }
     }

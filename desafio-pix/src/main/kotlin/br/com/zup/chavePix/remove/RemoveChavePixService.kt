@@ -23,7 +23,7 @@ class RemoveChavePixService(
         /**
          * Verifica existência da chave pix
          */
-        logger.info("Verificando se chave já existe no banco de dados.")
+        logger.info("Verificando se chave existe no banco de dados.")
         val possivelChave = chavePixRepository.findById(removeChavePix.idChave!!)
         if (possivelChave.isEmpty) {
             logger.error("Chave Pix ${removeChavePix.idChave} não encontrada.")
