@@ -13,7 +13,11 @@ service KeymanagerCadastraGrpcService {
   rpc cadastra (NovaChavePixRequest) returns (NovaChavePixResponse) {}
 }
 
-message Key {
+service KeymanagerRemoveGrpcService {
+  rpc remove (RemoveChavePixRequest) returns (RemoveChavePixResponse) {}
+}
+
+/*message Key {
   string idPix = 1;
   string chave = 2;
   TipoChave tipoChave = 3;
@@ -27,7 +31,7 @@ message ContaBancaria{
   string numeroConta = 2;
   string numeroAgencia = 3;
   TipoConta tipoConta = 4;
-}
+}*/
 
 enum TipoChave {
   UNKNOWN_TIPOCHAVE = 0;
@@ -51,5 +55,14 @@ message NovaChavePixRequest {
 }
 
 message NovaChavePixResponse {
+  string idPix = 1;
+}
+
+message RemoveChavePixRequest {
+  string idCliente = 1;
+  string idChave = 2;
+}
+
+message RemoveChavePixResponse {
   string idPix = 1;
 }
