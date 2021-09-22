@@ -1,14 +1,15 @@
 package br.com.zup.exceptions.handler
 
+import br.com.zup.chavePix.ClientNotFoundException
 import br.com.zup.exceptions.ExceptionHandler
 import br.com.zup.exceptions.ExceptionHandler.StatusWithDetails
 import io.grpc.Status
 import jakarta.inject.Singleton
 
 @Singleton
-class IllegalStateExceptionHandler : ExceptionHandler<IllegalStateException> {
+class ClientNotFoundExceptionHandler : ExceptionHandler<ClientNotFoundException> {
 
-    override fun handle(e: IllegalStateException): StatusWithDetails {
+    override fun handle(e: ClientNotFoundException): StatusWithDetails {
         return StatusWithDetails(
             Status.NOT_FOUND
                 .withDescription(e.message)
@@ -17,7 +18,7 @@ class IllegalStateExceptionHandler : ExceptionHandler<IllegalStateException> {
     }
 
     override fun supports(e: Exception): Boolean {
-        return e is IllegalStateException
+        return e is ClientNotFoundException
     }
 
 }

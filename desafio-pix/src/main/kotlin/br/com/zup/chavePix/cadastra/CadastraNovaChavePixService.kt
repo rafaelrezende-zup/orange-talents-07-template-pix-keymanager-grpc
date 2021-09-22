@@ -1,9 +1,9 @@
 package br.com.zup.chavePix.cadastra
 
-import br.com.zup.chavePix.ChavePix
-import br.com.zup.chavePix.ChavePixExistenteException
-import br.com.zup.chavePix.ChavePixRepository
+import br.com.zup.chavePix.*
+import br.com.zup.clients.BcbClient
 import br.com.zup.clients.ErpItauClient
+import io.micronaut.http.HttpStatus
 import io.micronaut.validation.Validated
 import jakarta.inject.Singleton
 import org.slf4j.LoggerFactory
@@ -14,7 +14,8 @@ import javax.validation.Valid
 @Singleton
 class CadastraNovaChavePixService(
     val chavePixRepository: ChavePixRepository,
-    val erpItauClient: ErpItauClient
+    val erpItauClient: ErpItauClient,
+    val bcbClient: BcbClient
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -34,11 +35,29 @@ class CadastraNovaChavePixService(
         /**
          * Busca conta bancária Itaú
          */
-        val response = erpItauClient.findBankAccount(
+        val responseErp = erpItauClient.findBankAccount(
             clienteId = chavePix.idCliente!!,
             tipo = chavePix.tipoConta!!.name
         )
-        val contaBancaria = response.body()?.paraContaBancaria() ?: throw IllegalStateException("Cliente Itaú não encontrado.")
+        val contaBancaria = responseErp.body()?.paraContaBancaria() ?: throw ClientNotFoundException("Cliente Itaú não encontrado.")
+
+        /**
+         * Registra chave Pix no Banco Central
+         */
+        logger.info("Registrando chave pix no BCB")
+        val requestBcb = chavePix.paraCreatePixKeyRequest(contaBancaria)
+        val responseBcb = bcbClient.createPixKey(requestBcb)
+        if (responseBcb.status != HttpStatus.CREATED) {
+            throw IllegalStateException("Erro ao registrar chave Pix no BCB")
+        }
+
+        /**
+         * Em caso de tipo chave ALEATÓRIA, utilizar chave gerada pelo BCB
+         */
+        if (chavePix.tipoChave == TipoChave.ALEATORIA) {
+            logger.info("Atribuindo chave PIX gerada pelo BCB")
+            chavePix.chave = responseBcb.body()!!.key
+        }
 
         /**
          * Salva os dados da Chave Pix no banco de dados
