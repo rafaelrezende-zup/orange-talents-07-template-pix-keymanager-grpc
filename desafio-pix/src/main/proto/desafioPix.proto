@@ -17,22 +17,6 @@ service KeymanagerRemoveGrpcService {
   rpc remove (RemoveChavePixRequest) returns (RemoveChavePixResponse) {}
 }
 
-/*message Key {
-  string idPix = 1;
-  string chave = 2;
-  TipoChave tipoChave = 3;
-  string idCliente = 4;
-  TipoConta tipoConta = 5;
-  google.protobuf.Timestamp criadoEm = 6;
-}
-
-message ContaBancaria{
-  string nomeInstituicao = 1;
-  string numeroConta = 2;
-  string numeroAgencia = 3;
-  TipoConta tipoConta = 4;
-}*/
-
 enum TipoChave {
   UNKNOWN_TIPOCHAVE = 0;
   CPF = 1;

@@ -1,5 +1,6 @@
 package br.com.zup.validators
 
+import br.com.zup.chavePix.TipoChave
 import br.com.zup.chavePix.cadastra.NovaChavePix
 import jakarta.inject.Singleton
 import javax.validation.Constraint
@@ -21,10 +22,10 @@ annotation class ValidPixKey(
 @Singleton
 class ValidPixKeyValidator : ConstraintValidator<ValidPixKey, NovaChavePix> {
     override fun isValid(value: NovaChavePix?, context: ConstraintValidatorContext?): Boolean {
-        if (value?.tipoChave == null) {
+        if (value?.tipoChave == TipoChave.UNKNOWN_TIPOCHAVE) {
             return false
         }
 
-        return value.tipoChave.valida(value.chave)
+        return value?.tipoChave!!.valida(value.chave)
     }
 }

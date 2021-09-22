@@ -26,10 +26,6 @@ enum class TipoChave {
     EMAIL {
         override fun valida(chave: String?): Boolean {
             if (chave.isNullOrBlank()) return false
-//            return EmailValidator().run {
-//                initialize(null)
-//                isValid(chave, null)
-//            }
             return chave.matches("^[A-Za-z0-9+_.-]+@(.+)\$".toRegex())
         }
     },
