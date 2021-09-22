@@ -9,6 +9,7 @@ import br.com.zup.chavePix.ChavePixRepository
 import br.com.zup.chavePix.ContaBancaria
 import br.com.zup.chavePix.TipoChave.CPF
 import br.com.zup.chavePix.TipoConta.CONTA_CORRENTE
+import br.com.zup.clients.BcbClient
 import br.com.zup.clients.ErpItauClient
 import io.grpc.ManagedChannel
 import io.grpc.Status
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
+import java.time.LocalDateTime
 import java.util.*
 
 @MicronautTest(transactional = false)
@@ -39,6 +41,9 @@ internal class CadastraNovaChavePixServerTest(
     @Inject
     lateinit var erpItauClient: ErpItauClient
 
+    @Inject
+    lateinit var bcbClient: BcbClient
+
     companion object {
         val UUID_RANDOM = UUID.randomUUID().toString()
     }
@@ -49,18 +54,46 @@ internal class CadastraNovaChavePixServerTest(
     }
 
     @Test
-    fun `deve cadastrar uma nova chave pix`() {
+    fun `deve cadastrar uma nova chave pix aleatoria`() {
         // cenário
         `when`(erpItauClient.findBankAccount(clienteId = UUID_RANDOM, tipo = TipoConta.CONTA_CORRENTE.toString()))
             .thenReturn(HttpResponse.ok(bankAccountResponse()))
 
+        `when`(bcbClient.createPixKey(createPixKeyRequest(KeyType.RANDOM, "", AccountType.CACC)))
+            .thenReturn(HttpResponse.created(createPixKeyResponse(KeyType.RANDOM, UUID_RANDOM, AccountType.CACC)))
+
         // ação
         val response = grpcClient.cadastra(NovaChavePixRequest
             .newBuilder()
-            .setChave("usuario@zup.com")
+            .setChave("")
+            .setIdCliente(UUID_RANDOM)
+            .setTipoChave(TipoChave.ALEATORIA)
+            .setTipoConta(TipoConta.CONTA_CORRENTE)
+            .build()
+        )
+
+        // validação
+        with(response) {
+            assertNotNull(idPix)
+        }
+    }
+
+    @Test
+    fun `deve cadastrar uma nova chave pix nao aleatoria`() {
+        // cenário
+        `when`(erpItauClient.findBankAccount(clienteId = UUID_RANDOM, tipo = TipoConta.CONTA_POUPANCA.toString()))
+            .thenReturn(HttpResponse.ok(bankAccountResponse()))
+
+        `when`(bcbClient.createPixKey(createPixKeyRequest(KeyType.EMAIL, "user@test.com", AccountType.SVGS)))
+            .thenReturn(HttpResponse.created(createPixKeyResponse(KeyType.EMAIL, "user@test.com", AccountType.SVGS)))
+
+        // ação
+        val response = grpcClient.cadastra(NovaChavePixRequest
+            .newBuilder()
+            .setChave("user@test.com")
             .setIdCliente(UUID_RANDOM)
             .setTipoChave(TipoChave.EMAIL)
-            .setTipoConta(TipoConta.CONTA_CORRENTE)
+            .setTipoConta(TipoConta.CONTA_POUPANCA)
             .build()
         )
 
@@ -139,6 +172,34 @@ internal class CadastraNovaChavePixServerTest(
         }
     }
 
+    @Test
+    fun `nao deve cadastrar uma nova chave pix quando der erro no BCB`() {
+        // cenário
+        `when`(erpItauClient.findBankAccount(clienteId = UUID_RANDOM, tipo = TipoConta.CONTA_CORRENTE.toString()))
+            .thenReturn(HttpResponse.ok(bankAccountResponse()))
+
+        `when`(bcbClient.createPixKey(createPixKeyRequest(KeyType.EMAIL, "user@test.com", AccountType.CACC)))
+            .thenReturn(HttpResponse.badRequest())
+
+        // ação
+        val response = assertThrows<StatusRuntimeException> {
+            grpcClient.cadastra(NovaChavePixRequest
+                .newBuilder()
+                .setChave("user@test.com")
+                .setIdCliente(UUID_RANDOM)
+                .setTipoChave(TipoChave.EMAIL)
+                .setTipoConta(TipoConta.CONTA_CORRENTE)
+                .build()
+            )
+        }
+
+        // validação
+        with(response) {
+            assertEquals(Status.FAILED_PRECONDITION.code, status.code)
+            assertEquals("Erro ao registrar chave Pix no BCB", status.description)
+        }
+    }
+
     private fun bankAccountResponse(): ErpItauClient.BankAccountResponse {
         return ErpItauClient.BankAccountResponse(
             CONTA_CORRENTE.toString(),
@@ -152,6 +213,49 @@ internal class CadastraNovaChavePixServerTest(
                 "Banco",
                 "60701190"
             )
+        )
+    }
+
+    private fun createPixKeyRequest(
+        keyType: KeyType,
+        key: String,
+        accountType: AccountType
+    ): CreatePixKeyRequest {
+        return CreatePixKeyRequest(
+            keyType,
+            key,
+            BankAccount(
+                "60701190",
+                "3166",
+                "21724",
+                accountType
+            ),
+            Owner(
+                "Usuario Teste",
+                "61144478081"
+            )
+        )
+    }
+
+    private fun createPixKeyResponse(
+        keyType: KeyType,
+        key: String,
+        accountType: AccountType
+    ): CreatePixKeyResponse {
+        return CreatePixKeyResponse(
+            keyType.toString(),
+            key,
+            BankAccount(
+                "60701190",
+                "3166",
+                "21724",
+                accountType
+            ),
+            Owner(
+                "Usuario Teste",
+                "61144478081"
+            ),
+            LocalDateTime.now()
         )
     }
 
@@ -183,6 +287,11 @@ internal class CadastraNovaChavePixServerTest(
     @MockBean(ErpItauClient::class)
     fun erpItauClient() : ErpItauClient? {
         return Mockito.mock(ErpItauClient::class.java)
+    }
+
+    @MockBean(BcbClient::class)
+    fun bcbClient() : BcbClient? {
+        return Mockito.mock(BcbClient::class.java)
     }
 
 }

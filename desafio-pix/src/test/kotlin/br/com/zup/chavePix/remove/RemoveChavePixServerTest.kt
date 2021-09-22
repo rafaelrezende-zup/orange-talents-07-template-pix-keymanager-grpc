@@ -4,6 +4,9 @@ import br.com.zup.KeymanagerRemoveGrpcServiceGrpc
 import br.com.zup.RemoveChavePixRequest
 import br.com.zup.chavePix.*
 import br.com.zup.chavePix.cadastra.CadastraNovaChavePixServerTest
+import br.com.zup.chavePix.cadastra.RemovePixKeyRequest
+import br.com.zup.chavePix.cadastra.RemovePixKeyResponse
+import br.com.zup.clients.BcbClient
 import io.grpc.ManagedChannel
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
@@ -11,11 +14,16 @@ import io.micronaut.context.annotation.Bean
 import io.micronaut.context.annotation.Factory
 import io.micronaut.grpc.annotation.GrpcChannel
 import io.micronaut.grpc.server.GrpcServerChannel
+import io.micronaut.http.HttpResponse
+import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
+import jakarta.inject.Inject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.mockito.Mockito
+import java.time.LocalDateTime
 import java.util.*
 
 @MicronautTest(transactional = false)
@@ -23,6 +31,9 @@ internal class RemoveChavePixServerTest(
     val grpcClient: KeymanagerRemoveGrpcServiceGrpc.KeymanagerRemoveGrpcServiceBlockingStub,
     val repository: ChavePixRepository
 ) {
+
+    @Inject
+    lateinit var bcbClient: BcbClient
 
     companion object {
         val UUID_RANDOM = UUID.randomUUID().toString()
@@ -38,6 +49,9 @@ internal class RemoveChavePixServerTest(
         // cenário
         val chavePix = chavePix()
         repository.save(chavePix)
+
+        Mockito.`when`(bcbClient.removePixKey(chavePix.chave, RemovePixKeyRequest(chavePix.chave, chavePix.contaAssociada.ispbInstituicao)))
+            .thenReturn(HttpResponse.ok(RemovePixKeyResponse(chavePix.chave, chavePix.contaAssociada.ispbInstituicao, LocalDateTime.now())))
 
         // ação
         val response = grpcClient.remove(RemoveChavePixRequest
@@ -121,6 +135,32 @@ internal class RemoveChavePixServerTest(
         }
     }
 
+    @Test
+    fun `nao deve remover chave pix quando der erro no BCB`() {
+        // cenário
+        val chavePix = chavePix()
+        repository.save(chavePix)
+
+        Mockito.`when`(bcbClient.removePixKey(chavePix.chave, RemovePixKeyRequest(chavePix.chave, chavePix.contaAssociada.ispbInstituicao)))
+            .thenReturn(HttpResponse.badRequest())
+
+        // ação
+        val response = assertThrows<StatusRuntimeException> {
+            grpcClient.remove(RemoveChavePixRequest
+                .newBuilder()
+                .setIdChave(chavePix.id)
+                .setIdCliente(chavePix.idCliente)
+                .build()
+            )
+        }
+
+        // validação
+        with(response) {
+            assertEquals(Status.FAILED_PRECONDITION.code, status.code)
+            assertEquals("Erro ao remover chave Pix no BCB", status.description)
+        }
+    }
+
     @Factory
     class Clients {
         @Bean
@@ -144,6 +184,11 @@ internal class RemoveChavePixServerTest(
                 "60701190"
             )
         )
+    }
+
+    @MockBean(BcbClient::class)
+    fun bcbClient() : BcbClient? {
+        return Mockito.mock(BcbClient::class.java)
     }
 
 }
