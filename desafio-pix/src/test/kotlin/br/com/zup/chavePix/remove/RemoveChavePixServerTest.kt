@@ -3,7 +3,6 @@ package br.com.zup.chavePix.remove
 import br.com.zup.KeymanagerRemoveGrpcServiceGrpc
 import br.com.zup.RemoveChavePixRequest
 import br.com.zup.chavePix.*
-import br.com.zup.chavePix.cadastra.CadastraNovaChavePixServerTest
 import br.com.zup.chavePix.cadastra.RemovePixKeyRequest
 import br.com.zup.chavePix.cadastra.RemovePixKeyResponse
 import br.com.zup.clients.BcbClient
@@ -103,7 +102,7 @@ internal class RemoveChavePixServerTest(
                 RemoveChavePixRequest
                     .newBuilder()
                     .setIdChave(chavePix.id)
-                    .setIdCliente(UUID_RANDOM)
+                    .setIdCliente(UUID.randomUUID().toString())
                     .build()
             )
         }
@@ -173,7 +172,7 @@ internal class RemoveChavePixServerTest(
         return ChavePix(
             "61144478081",
             TipoChave.CPF,
-            CadastraNovaChavePixServerTest.UUID_RANDOM,
+            UUID_RANDOM,
             TipoConta.CONTA_CORRENTE,
             ContaBancaria(
                 "Usuario Teste",

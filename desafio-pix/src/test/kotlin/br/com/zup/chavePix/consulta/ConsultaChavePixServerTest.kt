@@ -188,7 +188,7 @@ internal class ConsultaChavePixServerTest(
                 .newBuilder()
                 .setPixId(ConsultaChavePixRequest.ConsultaPixId
                     .newBuilder()
-                    .setIdCliente(UUID_RANDOM)
+                    .setIdCliente(UUID.randomUUID().toString())
                     .setIdChave(chavePix.id))
                 .build())
         }
@@ -225,7 +225,7 @@ internal class ConsultaChavePixServerTest(
         return ChavePix(
             "61144478081",
             TipoChave.CPF,
-            CadastraNovaChavePixServerTest.UUID_RANDOM,
+            UUID_RANDOM,
             TipoConta.CONTA_CORRENTE,
             ContaBancaria(
                 "Usuario Teste",
