@@ -12,7 +12,7 @@ data class CreatePixKeyRequest(
 ) {
 }
 
-data class CreatePixKeyResponse(
+data class PixKeyResponse(
     val keyType: String,
     val key: String,
     val bankAccount: BankAccount,

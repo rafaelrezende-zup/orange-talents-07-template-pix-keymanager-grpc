@@ -3,8 +3,8 @@ package br.com.zup.chavePix.consulta
 import br.com.zup.ConsultaChavePixResponse
 import br.com.zup.chavePix.ChavePix
 import br.com.zup.chavePix.cadastra.AccountType
-import br.com.zup.chavePix.cadastra.CreatePixKeyResponse
 import br.com.zup.chavePix.cadastra.KeyType
+import br.com.zup.chavePix.cadastra.PixKeyResponse
 import com.google.protobuf.Timestamp
 import java.time.ZoneId
 
@@ -14,7 +14,7 @@ class ConsultaChavePixResponseConverter {
         return ConsultaChavePixResponse
             .newBuilder()
             .setIdCliente(chave.idCliente)
-            .setIdChave(chave.idCliente)
+            .setIdChave(chave.id)
             .setChavePix(ConsultaChavePixResponse.ChavePix
                 .newBuilder()
                 .setTipoChave(chave.tipoChave.toString())
@@ -37,7 +37,7 @@ class ConsultaChavePixResponseConverter {
             .build()
     }
 
-    fun deResponseBcb(body: CreatePixKeyResponse?): ConsultaChavePixResponse {
+    fun deResponseBcb(body: PixKeyResponse?): ConsultaChavePixResponse {
 
         return ConsultaChavePixResponse
             .newBuilder()

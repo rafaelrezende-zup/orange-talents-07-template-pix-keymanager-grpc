@@ -1,7 +1,7 @@
 package br.com.zup.clients
 
 import br.com.zup.chavePix.cadastra.CreatePixKeyRequest
-import br.com.zup.chavePix.cadastra.CreatePixKeyResponse
+import br.com.zup.chavePix.cadastra.PixKeyResponse
 import br.com.zup.chavePix.cadastra.RemovePixKeyRequest
 import br.com.zup.chavePix.cadastra.RemovePixKeyResponse
 import io.micronaut.http.HttpResponse
@@ -15,7 +15,7 @@ interface BcbClient {
     @Post
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
-    fun createPixKey(@Body request: CreatePixKeyRequest) : HttpResponse<CreatePixKeyResponse>
+    fun createPixKey(@Body request: CreatePixKeyRequest) : HttpResponse<PixKeyResponse>
 
     @Delete("/{key}")
     @Consumes(MediaType.APPLICATION_XML)
@@ -25,6 +25,6 @@ interface BcbClient {
     @Get("/{key}")
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
-    fun consultaPixKey(@PathVariable key: String) : HttpResponse<CreatePixKeyResponse>
+    fun consultaPixKey(@PathVariable key: String) : HttpResponse<PixKeyResponse>
 
 }

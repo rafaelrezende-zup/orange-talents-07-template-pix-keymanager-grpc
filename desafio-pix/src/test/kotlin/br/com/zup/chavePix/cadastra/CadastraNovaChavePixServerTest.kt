@@ -241,8 +241,8 @@ internal class CadastraNovaChavePixServerTest(
         keyType: KeyType,
         key: String,
         accountType: AccountType
-    ): CreatePixKeyResponse {
-        return CreatePixKeyResponse(
+    ): PixKeyResponse {
+        return PixKeyResponse(
             keyType.toString(),
             key,
             BankAccount(
