@@ -3,6 +3,7 @@ package br.com.zup.chavePix.cadastra
 import br.com.zup.KeymanagerCadastraGrpcServiceGrpc
 import br.com.zup.NovaChavePixRequest
 import br.com.zup.NovaChavePixResponse
+import br.com.zup.chavePix.paraNovaChavePix
 import br.com.zup.exceptions.ErrorHandler
 import io.grpc.stub.StreamObserver
 import jakarta.inject.Singleton

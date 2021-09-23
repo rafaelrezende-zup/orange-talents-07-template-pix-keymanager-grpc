@@ -37,6 +37,14 @@ enum class KeyType {
                 else -> null
             }
         }
+        fun from(doaminType: KeyType) : TipoChave {
+            return when (doaminType) {
+                CPF -> TipoChave.CPF
+                EMAIL -> TipoChave.EMAIL
+                PHONE -> TipoChave.TELEFONE
+                RANDOM -> TipoChave.ALEATORIA
+            }
+        }
     }
 }
 
@@ -58,6 +66,12 @@ enum class AccountType {
                 TipoConta.CONTA_CORRENTE -> CACC
                 TipoConta.CONTA_POUPANCA -> SVGS
                 else -> null
+            }
+        }
+        fun from(doaminType: AccountType): TipoConta {
+            return when (doaminType) {
+                CACC -> TipoConta.CONTA_CORRENTE
+                SVGS -> TipoConta.CONTA_POUPANCA
             }
         }
     }

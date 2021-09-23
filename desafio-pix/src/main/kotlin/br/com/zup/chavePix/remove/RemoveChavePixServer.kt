@@ -3,7 +3,7 @@ package br.com.zup.chavePix.remove
 import br.com.zup.KeymanagerRemoveGrpcServiceGrpc
 import br.com.zup.RemoveChavePixRequest
 import br.com.zup.RemoveChavePixResponse
-import br.com.zup.chavePix.cadastra.paraRemoveChavePix
+import br.com.zup.chavePix.paraRemoveChavePix
 import br.com.zup.exceptions.ErrorHandler
 import io.grpc.stub.StreamObserver
 import jakarta.inject.Singleton

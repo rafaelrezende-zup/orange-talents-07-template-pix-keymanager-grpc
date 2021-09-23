@@ -17,6 +17,10 @@ service KeymanagerRemoveGrpcService {
   rpc remove (RemoveChavePixRequest) returns (RemoveChavePixResponse) {}
 }
 
+service KeymanagerConsultaGrpcService {
+  rpc consulta (ConsultaChavePixRequest) returns (ConsultaChavePixResponse) {}
+}
+
 enum TipoChave {
   UNKNOWN_TIPOCHAVE = 0;
   CPF = 1;
@@ -49,4 +53,42 @@ message RemoveChavePixRequest {
 
 message RemoveChavePixResponse {
   string idPix = 1;
+}
+
+message ConsultaChavePixRequest {
+
+  message ConsultaPixId {
+    string idCliente = 1;
+    string idChave = 2;
+  }
+
+  oneof filtroConsulta {
+    ConsultaPixId pixId = 1;
+    string chavePix = 2;
+  }
+
+}
+
+message ConsultaChavePixResponse {
+
+  message ChavePix {
+
+    message BankAccount {
+      string nomeInstituicao = 1;
+      string nomeTitular = 2;
+      string cpfTitular = 3;
+      string agencia = 4;
+      string conta = 5;
+      string tipoConta = 6;
+    }
+
+    string tipoChave = 1;
+    string chave = 2;
+    BankAccount contaBancaria = 3;
+    google.protobuf.Timestamp dataCriacao = 4;
+  }
+
+  string idCliente = 1;
+  string idChave = 2;
+  ChavePix chavePix = 3;
 }

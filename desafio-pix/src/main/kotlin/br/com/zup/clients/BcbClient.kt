@@ -22,4 +22,9 @@ interface BcbClient {
     @Produces(MediaType.APPLICATION_XML)
     fun removePixKey(@PathVariable key: String, @Body request: RemovePixKeyRequest) : HttpResponse<RemovePixKeyResponse>
 
+    @Get("/{key}")
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces(MediaType.APPLICATION_XML)
+    fun consultaPixKey(@PathVariable key: String) : HttpResponse<CreatePixKeyResponse>
+
 }
